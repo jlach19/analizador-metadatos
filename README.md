@@ -1,19 +1,34 @@
 # Lector y Analizador de Metadatos de Archivos para Forense Digital
 
-Proyecto de la materia de Programación de la UNC.
-
+> PROYECTO DEL MODULO 4 DE LA MATERIA DE PROGRAMACIÓN DE LA UNIVERSIDAD NACIONAL DE LAS CIENCIAS DR. HUMBERTO FERNÁNDEZ MORÁN
+>  
 ## Requisitos previos
 
-El proyecto requiere Python 3.10 o posterior, Tkinter, GNU Make y un compilador
-C11. **No necesita paquetes de terceros de Python ni librerías externas de C.**
-El analizador C solo usa cabeceras incluidas en C11: `ctype.h`, `inttypes.h`,
-`limits.h`, `stdint.h`, `stdio.h` y `string.h`. Tkinter forma parte de la
-biblioteca estándar de Python, pero algunas distribuciones requieren instalar
-por separado los componentes Tk del sistema.
+Se necesita tener instalado el sistema de control de versiones de GIT, para eso entra a su [página
+oficial](https://git-scm.com/) y sigue los pasos para la instalación.
+
+Posteriormente, clona este repositorio con el siguiente comando
+
+```bash
+git clone https://github.com/jlach19/analizador-metadatos.git
+```
+
+Se requiere
+
+* Python 3.10 o posterior
+* Libreria Tkinter de Python
+* GNU Make
+* Compilador C11.
+
+Este proyecto corre en Sistemas Operativos Linux, Windows y MacOS. Por lo tanto,
+el usuario debe asegurarse de instalar los requerimientos mencionados previamente segun
+el sistema operativo de su máquina.
+
+A continuación, se presentan las instrucciones segun cada sistema operativo
 
 ### Linux (Debian o Ubuntu)
 
-Instala Python, Tkinter, GNU Make y GCC:
+Abre la terminal y ejecuta
 
 ```bash
 sudo apt update
@@ -21,13 +36,9 @@ sudo apt install python3 python3-tk make build-essential
 ```
 
 `build-essential` incluye GCC y las cabeceras estándar necesarias para compilar
-C. En Fedora, instala los paquetes equivalentes con:
+C.
 
-```bash
-sudo dnf install python3 python3-tkinter make gcc
-```
-
-Zenity es opcional; si quieres el selector GTK grande, instálalo en Debian o
+Si quieres el selector GTK grande, instala la **zenity** en Debian o
 Ubuntu con `sudo apt install zenity`.
 
 ### Windows
@@ -38,7 +49,9 @@ Ubuntu con `sudo apt install zenity`.
 2. Instala Chocolatey siguiendo su
    [guía oficial](https://chocolatey.org/install). Es una instalación de una
    sola vez y requiere PowerShell como administrador.
-3. En PowerShell como administrador, instala las herramientas de compilación:
+3. Asegurate de tener instalado Chocolate en tu sistema, si no lo tienes
+   instalado sigue las instrucciones de su [guía oficial](https://chocolatey.org/install).
+   Luego, en PowerShell como administrador, instala las herramientas de compilación:
 
    ```powershell
    choco install make mingw -y
@@ -53,9 +66,6 @@ Ubuntu con `sudo apt install zenity`.
    make
    ```
 
-   El Makefile usa `py -3`: compila el código C con GCC y, si la compilación
-   termina correctamente, inicia el programa Python.
-
 Si quieres comprobar la instalación antes de ejecutar, estos comandos deben
 mostrar versiones:
 
@@ -64,8 +74,6 @@ py -3 --version
 make --version
 gcc --version
 ```
-
-Si `py` no se reconoce, repara o reinstala Python incluyendo el lanzador `py`.
 
 ### macOS
 
@@ -106,20 +114,8 @@ analizador C si hace falta, y después inicia la interfaz Python. Así no tienes
 que compilar C y lanzar Python en comandos separados.
 
 ```bash
-make build
+make build # solo compila el analizador C
 ```
-
-`make build` solo compila el analizador C. También puedes iniciar explícitamente
-la aplicación con `make run`. El Makefile usa `python3` en Linux/macOS y `py -3`
-en Windows. Si `py` no está disponible en Windows, puedes indicar otro comando
-con `make "PYTHON=python"` si `python` está en el `PATH`.
-
-```bash
-make "PYTHON=python"
-```
-
-El ejecutable C se guarda en `build/` y se vuelve a compilar cuando cambia su
-código fuente.
 
 ## Cómo funciona
 
