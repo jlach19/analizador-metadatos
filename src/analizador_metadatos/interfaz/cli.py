@@ -58,7 +58,11 @@ def imprimir_resumen_analisis(
     print(f"Archivo: {nombre_formato}")
     print(f"SHA-256: {hash_sha256}")
 
-    if resultado.cabecera_valida and not resultado.anomalias:
+    if resultado.formato == "TXT":
+        print(
+            "Estructura: no aplica para TXT; el contenido no se analiza localmente."
+        )
+    elif resultado.cabecera_valida and not resultado.anomalias:
         print("Estructura: válida; sin anomalías detectadas.")
     else:
         print("Estructura: requiere revisión.")
@@ -84,6 +88,23 @@ def imprimir_resumen_analisis(
             f"{detecciones}/{motores_analizados} detecciones "
             f"({estadisticas['malicious']} maliciosas, "
             f"{estadisticas['suspicious']} sospechosas)"
+        )
+        if estadisticas["malicious"]:
+            unidad_motor = (
+                "motor" if estadisticas["malicious"] == 1 else "motores"
+            )
+            print(
+                "Veredicto de VirusTotal: detecciones maliciosas "
+                f"({estadisticas['malicious']} {unidad_motor})."
+            )
+        else:
+            print(
+                "Veredicto de VirusTotal: sin detecciones maliciosas en este "
+                "reporte; esto no garantiza que el archivo sea seguro."
+            )
+        print(
+            "La ausencia de detecciones no garantiza que el archivo sea seguro; "
+            "el resultado depende de los motores consultados."
         )
     else:
         print("VirusTotal: no hay estadísticas de motores disponibles.")

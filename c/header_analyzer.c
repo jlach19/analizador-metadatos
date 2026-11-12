@@ -276,6 +276,17 @@ static void analyze_exe(FILE *file, long file_size,
     printf("]}\n");
 }
 
+static void analyze_txt(long file_size, const unsigned char *header,
+                        size_t header_length) {
+    printf("{\"format\":\"TXT\",\"file_size\":%ld,\"signature_offset\":null,"
+           "\"header_hex\":\"",
+           file_size);
+    print_hex(header, header_length);
+    printf("\",\"header_valid\":true,"
+           "\"checks\":{\"txt_extension_supported\":true},"
+           "\"anomalies\":[]}\n");
+}
+
 int main(int argc, char **argv) {
     FILE *file;
     long file_size;
@@ -284,6 +295,7 @@ int main(int argc, char **argv) {
     int format_pdf;
     int format_png;
     int format_exe;
+    int format_txt;
 
     if (argc != 2) {
         fprintf(stderr, "Uso: header_analyzer <archivo>\n");
@@ -293,8 +305,10 @@ int main(int argc, char **argv) {
     format_pdf = extension_equals(argv[1], ".pdf");
     format_png = extension_equals(argv[1], ".png");
     format_exe = extension_equals(argv[1], ".exe");
-    if (!format_pdf && !format_png && !format_exe) {
-        fprintf(stderr, "Formato no soportado. Usa archivos PDF, PNG o EXE.\n");
+    format_txt = extension_equals(argv[1], ".txt");
+    if (!format_pdf && !format_png && !format_exe && !format_txt) {
+        fprintf(stderr,
+                "Formato no soportado. Usa archivos PDF, PNG, EXE o TXT.\n");
         return 3;
     }
 
@@ -326,8 +340,10 @@ int main(int argc, char **argv) {
         analyze_pdf(file, file_size, header, header_length);
     } else if (format_png) {
         analyze_png(file, file_size, header, header_length);
-    } else {
+    } else if (format_exe) {
         analyze_exe(file, file_size, header, header_length);
+    } else {
+        analyze_txt(file_size, header, header_length);
     }
 
     if (fclose(file) != 0) {
