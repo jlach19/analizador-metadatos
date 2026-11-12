@@ -19,6 +19,7 @@ Se requiere
 * Libreria Tkinter de Python
 * GNU Make
 * Compilador C11.
+* Un llavero seguro del sistema operativo y la dependencia `keyring` de Python.
 
 Este proyecto corre en Sistemas Operativos Linux, Windows y MacOS. Por lo tanto,
 el usuario debe asegurarse de instalar los requerimientos mencionados previamente segun
@@ -99,6 +100,21 @@ gcc --version
 
 ## Compilar y ejecutar
 
+Instala las dependencias de Python una sola vez, usando el mismo Python con el
+que ejecutas el proyecto:
+
+```bash
+# Linux o macOS
+python3 -m pip install -r requirements.txt
+make
+```
+
+```powershell
+# Windows PowerShell
+py -3 -m pip install -r requirements.txt
+make
+```
+
 Desde la carpeta del proyecto, ejecuta el comando correspondiente.
 
 ```bash
@@ -109,31 +125,32 @@ make
 gmake
 ```
 
-El objetivo predeterminado `run` primero ejecuta `build.py`, que compila el
-analizador C si hace falta, y después inicia la interfaz Python. Así no tienes
-que compilar C y lanzar Python en comandos separados.
-
-```bash
-make build # solo compila el analizador C
-```
-
 ## Cómo funciona
 
-1. Selecciona **1. Seleccionar archivo**. Se abrirá el selector gráfico para
-   navegar por tus directorios. En Linux se usa Zenity cuando está instalado
-   (ventana GTK de 1100 × 700); si no está disponible, se usa Tkinter. En
-   Windows y macOS se utiliza el diálogo del sistema a través de Tkinter.
+1. Selecciona archivo. Se abrirá el selector gráfico para
+   navegar por tus directorios. 
 2. Python invoca el analizador C con la ruta seleccionada. C abre el archivo
    solo para lectura y extrae sus bytes de cabecera.
 3. El programa comprueba:
    - **PDF:** firma `%PDF-`, versión y presencia de `%%EOF` cerca del final.
    - **PNG:** firma, chunk `IHDR`, dimensiones y CRC de `IHDR`.
    - **EXE/PE:** firma DOS `MZ`, desplazamiento PE y firma `PE`.
-4. Python presenta la cabecera hexadecimal, el resultado de cada comprobación
-   y las anomalías encontradas. Se aceptan extensiones `.pdf`, `.png` y `.exe`.
-5. Si cierras el selector sin elegir un archivo, vuelves al menú. Selecciona
-   **2. Salir** para cerrar el programa.
-
-Estas comprobaciones son iniciales: no validan por completo los formatos ni
-determinan si un archivo es seguro. El programa **no ejecuta el archivo ni se
-conecta todavía a VirusTotal**.
+   - **TXT:** se admite para calcular el hash y consultar VirusTotal; el
+     contenido no se analiza localmente.
+4. Python calcula el SHA-256 y extrae el formato, la extensión, el tamaño, la
+   cabecera hexadecimal, las comprobaciones y las anomalías.
+5. La conexión con VirusTotal y `VT_API_KEY` son obligatorias. El programa
+   consulta el reporte por SHA-256; si no existe, sube el archivo, espera a que
+   VirusTotal termine el análisis y guarda/actualiza su dictamen en
+   `REPORTE_VIRUSTOTAL`. Si falta la clave, falla la conexión o VirusTotal no
+   termina el análisis, no se registra ni se presenta el análisis como
+   completado. Archivos de más de 32 MB usan el endpoint de carga grande; el
+   límite de carga de VirusTotal es 650 MB.
+6. Cuando hay reporte, el archivo y el análisis local también se guardan en
+   SQLite (`database_metadatos`). En consola se muestra un resumen con nombre,
+   formato, tamaño legible, SHA-256, estado estructural y anomalías, conteo de
+   detecciones de VirusTotal, fecha y procedencia del reporte y confirmación de
+   persistencia. La cabecera hexadecimal y cada comprobación se conservan en
+   la base, pero no se despliegan en la salida normal.
+7. Si cierras el selector sin elegir un archivo, vuelves al menú. 
+8. Selecciona "Salir" para cerrar el programa.
