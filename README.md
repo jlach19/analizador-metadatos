@@ -66,6 +66,17 @@ Ubuntu con `sudo apt install zenity`.
    make
    ```
 
+   Si instalaste los requisitos dentro de un entorno virtual llamado `.venv`,
+   indica a `make` que use el Python de ese entorno:
+
+   ```powershell
+   make PYTHON=".venv/Scripts/python.exe"
+   ```
+
+   Ejecuta este comando desde la carpeta del proyecto. No importa si el
+   entorno virtual está activado: así tanto la compilación como el programa
+   usarán el Python de `.venv` y sus paquetes instalados.
+
 Si quieres comprobar la instalación antes de ejecutar, estos comandos deben
 mostrar versiones:
 
